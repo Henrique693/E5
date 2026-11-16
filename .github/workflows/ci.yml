@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-and-build:
+    name: quality-and-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gerador_qr
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar Flutter (canal stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          cache-dependency-path: gerador_qr/pubspec.lock
+
+      - name: Instalar dependências
+        run: flutter pub get
+
+      - name: Verificar formatação Dart
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analisar código
+        run: flutter analyze --fatal-infos
+
+      - name: Executar testes automatizados
+        run: flutter test --coverage
+
+      - name: Gerar APK de release
+        run: flutter build apk --release
+
+      - name: Gerar build Web de release
+        run: flutter build web --release
+
+      - name: Preparar pacote de release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p release-package/web
+          cp build/app/outputs/flutter-apk/app-release.apk release-package/gerador-qr.apk
+          cp -R build/web/. release-package/web/
+
+      - name: Armazenar artefatos para o CD
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: gerador-qr-release
+          path: gerador_qr/release-package/
+          if-no-files-found: error
+          retention-days: 14

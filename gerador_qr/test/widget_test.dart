@@ -1,30 +1,44 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:gerador_qr/main.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('exibe a tela inicial sem QR Code', (WidgetTester tester) async {
+    await tester.pumpWidget(const MeuApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Gerador de QR Code'), findsOneWidget);
+    expect(find.byKey(const Key('qr-input')), findsOneWidget);
+    expect(find.byType(QrImageView), findsNothing);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  testWidgets('gera um QR Code com o texto informado',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const MeuApp());
+
+    await tester.enterText(
+      find.byKey(const Key('qr-input')),
+      'https://example.com',
+    );
+    await tester.tap(find.byKey(const Key('generate-qr-button')));
+    await tester.pumpAndSettle();
+
+    final qrFinder = find.byType(QrImageView);
+    expect(qrFinder, findsOneWidget);
+    expect(tester.widget<QrImageView>(qrFinder).data, 'https://example.com');
+  });
+
+  testWidgets('informa quando o campo está vazio',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const MeuApp());
+
+    await tester.tap(find.byKey(const Key('generate-qr-button')));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(
+      find.text('Digite um texto ou link para gerar o QR Code.'),
+      findsOneWidget,
+    );
+    expect(find.byType(QrImageView), findsNothing);
   });
 }

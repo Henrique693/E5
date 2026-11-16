@@ -1,0 +1,36 @@
+# IDEs and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.iml
+
+# Flutter/Dart generated files
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/build/
+**/coverage/
+**/.pub-cache/
+**/.pub/
+
+# Android local/generated files
+**/.gradle/
+**/local.properties
+**/captures/
+**/.cxx/
+**/key.properties
+**/*.jks
+**/*.keystore
+
+# iOS/macOS generated files
+**/Flutter/ephemeral/
+**/Pods/
+**/.symlinks/
+**/DerivedData/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
