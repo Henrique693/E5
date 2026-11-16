@@ -1,11 +1,11 @@
 {
-    "name": "gerador_qr",
-    "short_name": "gerador_qr",
+    "name": "Gerador de QR Code",
+    "short_name": "Gerador QR",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Aplicativo para gerar QR Codes a partir de textos e links.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

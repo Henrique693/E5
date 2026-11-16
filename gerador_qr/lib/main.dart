@@ -10,9 +10,19 @@ class MeuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'Gerador de QR Code',
       debugShowCheckedModeBanner: false,
-      home: GeradorQrPage(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF3157A4),
+        ),
+        useMaterial3: true,
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
+      ),
+      home: const GeradorQrPage(),
     );
   }
 }
@@ -25,14 +35,30 @@ class GeradorQrPage extends StatefulWidget {
 }
 
 class _GeradorQrPageState extends State<GeradorQrPage> {
-  final TextEditingController controlador = TextEditingController();
+  final TextEditingController _controlador = TextEditingController();
+  String? _textoQr;
 
-  String textoQr = '';
+  void _gerarQrCode() {
+    final texto = _controlador.text.trim();
 
-  void gerarQrCode() {
-    setState(() {
-      textoQr = controlador.text;
-    });
+    if (texto.isEmpty) {
+      setState(() => _textoQr = null);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Digite um texto ou link para gerar o QR Code.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _textoQr = texto);
+  }
+
+  @override
+  void dispose() {
+    _controlador.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,45 +68,88 @@ class _GeradorQrPageState extends State<GeradorQrPage> {
         title: const Text('Gerador de QR Code'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Digite um texto ou link',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Icon(
+                    Icons.qr_code_2_rounded,
+                    size: 72,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Transforme textos e links em QR Codes',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Digite o conteúdo abaixo e toque em “Gerar QR Code”.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 24),
+                  TextField(
+                    key: const Key('qr-input'),
+                    controller: _controlador,
+                    minLines: 1,
+                    maxLines: 4,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _gerarQrCode(),
+                    decoration: const InputDecoration(
+                      labelText: 'Texto ou link',
+                      hintText: 'Ex.: https://www.exemplo.com',
+                      prefixIcon: Icon(Icons.edit_note),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    key: const Key('generate-qr-button'),
+                    onPressed: _gerarQrCode,
+                    icon: const Icon(Icons.qr_code),
+                    label: const Text('Gerar QR Code'),
+                  ),
+                  if (_textoQr != null) ...[
+                    const SizedBox(height: 28),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Seu QR Code',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 16),
+                            QrImageView(
+                              data: _textoQr!,
+                              version: QrVersions.auto,
+                              size: 220,
+                              semanticsLabel: 'QR Code gerado',
+                            ),
+                            const SizedBox(height: 12),
+                            SelectableText(
+                              _textoQr!,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            TextField(
-              controller: controlador,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Ex.: https://www.google.com',
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: gerarQrCode,
-              child: const Text('Gerar QR Code'),
-            ),
-
-            const SizedBox(height: 30),
-
-            if (textoQr.isNotEmpty)
-              QrImageView(
-                data: textoQr,
-                version: QrVersions.auto,
-                size: 220,
-              ),
-          ],
+          ),
         ),
       ),
     );

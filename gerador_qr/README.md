@@ -1,17 +1,39 @@
-# gerador_qr
+# GQR — Gerador de QR Code
 
-A new Flutter project.
+Aplicativo Flutter simples para transformar textos e links em QR Codes.
 
-## Getting Started
+## Funcionalidades
 
-This project is a starting point for a Flutter application.
+- Recebe um texto ou endereço de internet.
+- Gera um QR Code a partir do conteúdo informado.
+- Valida o campo vazio antes de gerar.
+- Permite selecionar/copiar o conteúdo apresentado.
 
-A few resources to get you started if this is your first Flutter project:
+## Requisitos
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter SDK compatível com o intervalo Dart declarado em `pubspec.yaml`.
+- Dependências resolvidas por `flutter pub get`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Executar
+
+```bash
+flutter pub get
+flutter run
+```
+
+## Validar
+
+```bash
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test
+```
+
+## Builds
+
+```bash
+flutter build apk --release
+flutter build web --release
+```
+
+A dependência de geração do QR Code é `qr_flutter`. As versões resolvidas estão registradas em `pubspec.lock`.
