@@ -12,8 +12,9 @@ void main() {
     expect(find.byType(QrImageView), findsNothing);
   });
 
-  testWidgets('gera um QR Code com o texto informado',
-      (WidgetTester tester) async {
+  testWidgets('gera um QR Code com o texto informado', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MeuApp());
 
     await tester.enterText(
@@ -28,8 +29,7 @@ void main() {
     expect(tester.widget<QrImageView>(qrFinder).data, 'https://example.com');
   });
 
-  testWidgets('informa quando o campo está vazio',
-      (WidgetTester tester) async {
+  testWidgets('informa quando o campo está vazio', (WidgetTester tester) async {
     await tester.pumpWidget(const MeuApp());
 
     await tester.tap(find.byKey(const Key('generate-qr-button')));

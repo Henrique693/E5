@@ -14,9 +14,7 @@ class MeuApp extends StatelessWidget {
       title: 'Gerador de QR Code',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF3157A4),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF3157A4)),
         useMaterial3: true,
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),
@@ -86,9 +84,8 @@ class _GeradorQrPageState extends State<GeradorQrPage> {
                   Text(
                     'Transforme textos e links em QR Codes',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: Theme.of(context).textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
